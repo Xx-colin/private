@@ -3,133 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stream Player</title>
+<title> Stream+ Ultra</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+:root{
+--bg:#0d0d0f;
+--text:white;
+--glass:rgba(255,255,255,0.07);
 }
-
-body {
-    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-    color: white;
+.light{
+--bg:#f5f5f7;
+--text:black;
+--glass:rgba(0,0,0,0.08);
 }
-
-/* HEADER */
-header {
-    padding: 20px 40px;
-    font-size: 22px;
-    font-weight: bold;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(10px);
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif;}
+body{background:var(--bg);color:var(--text);transition:.4s ease;}
+nav{
+position:fixed;top:0;width:100%;
+padding:20px 50px;
+display:flex;justify-content:space-between;
+background:var(--glass);
+backdrop-filter:blur(20px);
+z-index:1000;
 }
-
-/* HERO */
-.hero {
-    height: 300px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.9)),
-                url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    padding-left: 40px;
-    font-size: 40px;
-    font-weight: bold;
+nav div{font-weight:500;}
+button{
+padding:8px 14px;border:none;border-radius:12px;
+background:white;cursor:pointer;font-weight:500;
 }
-
-/* CONTROLS */
-.controls {
-    padding: 30px 40px;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+.hero{
+height:80vh;
+background:url("https://images.unsplash.com/photo-1505685296765-3a2736de412f") center/cover;
+display:flex;flex-direction:column;justify-content:center;
+padding-left:80px;position:relative;
 }
-
-input {
-    padding: 12px;
-    width: 250px;
-    border-radius: 8px;
-    border: none;
-    background: #2a2a2a;
-    color: white;
-    font-size: 16px;
+.hero::after{
+content:"";position:absolute;inset:0;
+background:linear-gradient(to bottom,rgba(0,0,0,0.3),rgba(0,0,0,0.9));
 }
-
-button {
-    padding: 12px 18px;
-    border-radius: 8px;
-    border: none;
-    background: #e50914;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
+.hero-content{position:relative;z-index:2;animation:fade 1.2s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+input{
+padding:14px;border-radius:12px;border:none;width:250px;margin-right:10px;
 }
-
-button:hover {
-    background: #ff1f2d;
-    transform: scale(1.05);
+.section{
+padding:100px 80px 40px 80px;
 }
-
-/* PLAYER */
-.player-container {
-    padding: 0 40px 40px 40px;
+.section h2{margin-bottom:20px;}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:20px;
 }
-
-iframe {
-    width: 100%;
-    height: 70vh;
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+.card{cursor:pointer;transition:.3s ease;}
+.card img{width:100%;border-radius:20px;}
+.card:hover{transform:scale(1.08);}
+.loader{
+display:none;
+text-align:center;
+font-size:20px;
+padding:40px;
 }
-
-/* RESPONSIVE */
-@media(max-width: 768px) {
-    .hero {
-        font-size: 28px;
-        height: 200px;
-    }
+.overlay{
+position:fixed;inset:0;
+background:rgba(0,0,0,.9);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:2000;
+}
+.overlay iframe{
+width:90%;
+height:80%;
+border-radius:25px;
+border:none;
+}
+.closeBtn{
+position:absolute;
+top:30px;right:50px;
+background:white;padding:10px 15px;
+}
+.categoryBtns button{
+margin-right:10px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-🎬 My Stream Player
-</header>
+<nav>
+<div> Stream+ Ultra</div>
+<button onclick="toggleMode()">Light/Dark</button>
+</nav>
 
-<div class="hero">
-Stream Anything
+<section class="hero">
+<div class="hero-content">
+<h1>Watch Everything.</h1><br>
+<input id="searchInput" placeholder="Suche Film oder Serie">
+<button onclick="searchAll()">Suchen</button>
 </div>
+</section>
 
-<div class="controls">
-    <input id="input-id" placeholder="Movie oder TV ID">
-    <button onclick="loadMovie()">Film starten</button>
-    <button onclick="loadTV()">Serie (S1E1)</button>
+<section class="section">
+<h2>Kategorien</h2>
+<div class="categoryBtns">
+<button onclick="loadTrending()">Trending</button>
+<button onclick="loadCategory(28)">Action</button>
+<button onclick="loadCategory(18)">Drama</button>
+<button onclick="loadCategory(878)">Sci-Fi</button>
 </div>
+</section>
 
-<div class="player-container">
-    <iframe id="video-player"></iframe>
+<div class="loader" id="loader">Loading...</div>
+
+<section class="section">
+<h2>Ergebnisse</h2>
+<div class="grid" id="grid"></div>
+</section>
+
+<div class="overlay" id="overlay">
+<button class="closeBtn" onclick="closePlayer()">Schließen</button>
+<iframe id="playerFrame"></iframe>
 </div>
 
 <script>
-function loadMovie() {
-    const id = document.getElementById("input-id").value;
-    document.getElementById("video-player").src =
-        `https://mapple.uk/watch/movie/${id}?autoPlay=true&theme=#e50914`;
+const API_KEY="9fa7b865c9720cab7dbc5e968d71bded";
+const IMG="https://image.tmdb.org/t/p/w500";
+
+function toggleMode(){
+document.body.classList.toggle("light");
 }
 
-function loadTV() {
-    const id = document.getElementById("input-id").value;
-    document.getElementById("video-player").src =
-        `https://mapple.uk/watch/tv/${id}-1-1?autoPlay=true&nextButton=true&theme=#e50914`;
+function showLoader(state){
+document.getElementById("loader").style.display=state?"block":"none";
 }
+
+async function loadTrending(){
+showLoader(true);
+const res=await fetch(`https://api.themoviedb.org/3/trending/all/week?api_key=${API_KEY}`);
+const data=await res.json();
+display(data.results);
+showLoader(false);
+}
+
+async function loadCategory(id){
+showLoader(true);
+const res=await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${id}`);
+const data=await res.json();
+display(data.results);
+showLoader(false);
+}
+
+async function searchAll(){
+const q=document.getElementById("searchInput").value;
+showLoader(true);
+const res=await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${q}`);
+const data=await res.json();
+display(data.results);
+showLoader(false);
+}
+
+function display(items){
+const grid=document.getElementById("grid");
+grid.innerHTML="";
+items.forEach(item=>{
+if(!item.poster_path)return;
+const div=document.createElement("div");
+div.classList.add("card");
+div.innerHTML=`<img src="${IMG+item.poster_path}">`;
+div.onclick=()=>openPlayer(item);
+grid.appendChild(div);
+});
+}
+
+function openPlayer(item){
+const overlay=document.getElementById("overlay");
+overlay.style.display="flex";
+
+if(item.media_type==="tv"){
+openTV(item.id);
+}else{
+openMovie(item.id);
+}
+}
+
+async function openTV(id){
+const season=prompt("Staffel Nummer eingeben:");
+const episode=prompt("Episode Nummer eingeben:");
+document.getElementById("playerFrame").src=
+`https://mapple.uk/watch/tv/${id}-${season}-${episode}?autoPlay=true`;
+}
+
+function openMovie(id){
+document.getElementById("playerFrame").src=
+`https://mapple.uk/watch/movie/${id}?autoPlay=true`;
+}
+
+function closePlayer(){
+document.getElementById("overlay").style.display="none";
+document.getElementById("playerFrame").src="";
+}
+
+loadTrending();
 </script>
 
 </body>
