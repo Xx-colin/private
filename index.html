@@ -1,63 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>MappleTV Player</title>
-    <style>
-        body {
-            margin: 0;
-            background: #000;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stream Player</title>
 
-        #controls {
-            padding: 15px;
-            background: #111;
-            display: flex;
-            gap: 10px;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-        input {
-            padding: 8px;
-        }
+body {
+    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+    color: white;
+}
 
-        button {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
+/* HEADER */
+header {
+    padding: 20px 40px;
+    font-size: 22px;
+    font-weight: bold;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+}
 
-        iframe {
-            width: 100%;
-            height: 90vh;
-            border: none;
-        }
-    </style>
+/* HERO */
+.hero {
+    height: 300px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.9)),
+                url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    padding-left: 40px;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+/* CONTROLS */
+.controls {
+    padding: 30px 40px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+input {
+    padding: 12px;
+    width: 250px;
+    border-radius: 8px;
+    border: none;
+    background: #2a2a2a;
+    color: white;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #e50914;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #ff1f2d;
+    transform: scale(1.05);
+}
+
+/* PLAYER */
+.player-container {
+    padding: 0 40px 40px 40px;
+}
+
+iframe {
+    width: 100%;
+    height: 70vh;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+}
+
+/* RESPONSIVE */
+@media(max-width: 768px) {
+    .hero {
+        font-size: 28px;
+        height: 200px;
+    }
+}
+</style>
 </head>
+
 <body>
 
-<div id="controls">
-    <input id="input-id" placeholder="Movie ID oder TV ID">
-    <button onclick="loadMovie()">Load Movie</button>
-    <button onclick="loadTV()">Load TV (S1E1)</button>
+<header>
+🎬 My Stream Player
+</header>
+
+<div class="hero">
+Stream Anything
 </div>
 
-<iframe id="video-player"></iframe>
+<div class="controls">
+    <input id="input-id" placeholder="Movie oder TV ID">
+    <button onclick="loadMovie()">Film starten</button>
+    <button onclick="loadTV()">Serie (S1E1)</button>
+</div>
+
+<div class="player-container">
+    <iframe id="video-player"></iframe>
+</div>
 
 <script>
 function loadMovie() {
     const id = document.getElementById("input-id").value;
     document.getElementById("video-player").src =
-        `https://mapple.uk/watch/movie/${id}?autoPlay=true`;
+        `https://mapple.uk/watch/movie/${id}?autoPlay=true&theme=#e50914`;
 }
 
 function loadTV() {
     const id = document.getElementById("input-id").value;
     document.getElementById("video-player").src =
-        `https://mapple.uk/watch/tv/${id}-1-1?autoPlay=true&nextButton=true`;
+        `https://mapple.uk/watch/tv/${id}-1-1?autoPlay=true&nextButton=true&theme=#e50914`;
 }
 </script>
 
 </body>
 </html>
-
